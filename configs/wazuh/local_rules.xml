@@ -1,0 +1,36 @@
+<group name="audit,">
+   <rule id="100002" level="3">
+        <if_sid>80790</if_sid>
+        <field name="audit.directory.name">downloads|tmp|temp</field>
+        <description>Audit: $(audit.exe) created a file with filename $(audit.file.name) in the folder $(audit.directory.name).</description>
+        <group>audit_watch_write,</group>
+    </rule>
+
+    <rule id="100003" level="12">
+        <if_sid>100002</if_sid>
+        <field name="audit.file.name">.py|.sh|.elf|.php</field>
+        <description>Audit: $(audit.exe) created a file with a suspicious file extension: $(audit.file.name) in the folder $(audit.directory.name).</description>
+        <group>audit_watch_write,</group>
+    </rule>
+
+    <rule id="100004" level="6">
+        <if_sid>100002</if_sid>
+        <field name="audit.success">no</field>
+        <description>Audit: $(audit.exe) created a file with filename $(audit.file.name) but failed</description>
+        <group>audit_watch_write,</group>
+    </rule>
+
+    <rule id="100005" level="12">
+        <if_sid>100003</if_sid>
+        <field name="audit.file.name">malware|shell|dropper|linpeas</field>
+        <description>Audit: $(audit.exe) created a file with suspicious file name: $(audit.file.name) in the folder $(audit.directory.name).</description>
+        <group>audit_watch_write,</group>
+    </rule>
+
+    <rule id="100006" level="0">
+        <if_sid>100005</if_sid>
+        <field name="audit.file.name">malware-checker.py</field>
+        <description>False positive. "malware-checker.py" is used by our red team for testing. This is just a temporary exception.</description>
+        <group>audit_watch_write,</group>
+    </rule>
+</group>
